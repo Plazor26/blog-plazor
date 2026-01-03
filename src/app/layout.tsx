@@ -1,4 +1,5 @@
 import "./globals.css";
+import Script from "next/script";
 
 export const metadata = {
   title: "Plazor",
@@ -12,7 +13,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      {/* pure white, no gray strip around */}
+      <head>
+        {/* Google AdSense verification — does NOT enable ads by itself */}
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8438735279878088"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
+      </head>
+
+      {/* pure white background, no gray strip */}
       <body className="min-h-screen bg-white text-neutral-900 antialiased">
         {children}
       </body>

@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
+import ShareRow from "@/components/ShareRow";
+import Comments from "@/components/Comments";
 import { getPostBySlug } from "@/lib/posts";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
@@ -10,48 +12,6 @@ import readingTime from "reading-time";
 function initials(name: string) {
   const parts = (name || "Plazor").trim().split(" ").filter(Boolean);
   return ((parts[0]?.[0] ?? "P") + (parts[1]?.[0] ?? "")).toUpperCase();
-}
-
-function ShareRow({
-  title,
-  url,
-}: {
-  title: string;
-  url: string;
-}) {
-  const encodedUrl = encodeURIComponent(url);
-  const encodedTitle = encodeURIComponent(title);
-
-  return (
-    <div className="flex flex-wrap items-center gap-4 text-sm text-neutral-600">
-      <span className="font-medium text-neutral-900">Share:</span>
-
-      <a
-        href={`https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:underline"
-      >
-        X
-      </a>
-
-      <a
-        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="hover:underline"
-      >
-        LinkedIn
-      </a>
-
-      <button
-        onClick={() => navigator.clipboard.writeText(url)}
-        className="hover:underline"
-      >
-        Copy link
-      </button>
-    </div>
-  );
 }
 
 export default async function PostPage({
@@ -68,14 +28,11 @@ export default async function PostPage({
     const author = (data as any)?.author ?? "Plazor";
     const tag = (data as any)?.tags?.[0] ?? "Essay";
     const image = (data as any)?.image as string | undefined;
-
     const url = `https://blog.plazor.xyz/posts/${slug}`;
 
     return (
       <div className="min-h-screen flex flex-col bg-white text-neutral-900">
-        {/* MAIN */}
         <main className="flex-1">
-          {/* HERO */}
           {image && (
             <section className="relative">
               <Navbar />
@@ -92,10 +49,9 @@ export default async function PostPage({
             </section>
           )}
 
-          {/* ARTICLE */}
           <article className="mx-auto max-w-3xl px-6 py-16 space-y-14">
             <header className="space-y-6">
-              <span className="inline-flex items-center rounded-md bg-neutral-100 px-2 py-0.5 text-[11px] uppercase tracking-wide text-neutral-700">
+              <span className="inline-flex rounded-md bg-neutral-100 px-2 py-0.5 text-[11px] uppercase tracking-wide text-neutral-700">
                 {tag}
               </span>
 
@@ -115,46 +71,19 @@ export default async function PostPage({
               </div>
             </header>
 
-            {/* CONTENT */}
             <div className="prose prose-neutral max-w-none text-neutral-900">
               <MDXRemote source={content} options={mdxOptions} />
             </div>
 
-            {/* SHARE */}
             <ShareRow title={data.title} url={url} />
 
-            {/* COMMENTS */}
             <section className="pt-10 border-t">
-              <div className="text-sm font-medium mb-4">
-                Comments
-              </div>
-
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: `
-<script src="https://giscus.app/client.js"
-  data-repo="YOUR_GITHUB_USERNAME/YOUR_REPO"
-  data-repo-id="YOUR_REPO_ID"
-  data-category="General"
-  data-category-id="YOUR_CATEGORY_ID"
-  data-mapping="pathname"
-  data-strict="0"
-  data-reactions-enabled="1"
-  data-emit-metadata="0"
-  data-input-position="bottom"
-  data-theme="light"
-  data-lang="en"
-  crossorigin="anonymous"
-  async>
-</script>
-                  `,
-                }}
-              />
+              <h3 className="text-sm font-medium mb-4">Comments</h3>
+              <Comments />
             </section>
           </article>
         </main>
 
-        {/* FOOTER */}
         <footer className="bg-neutral-900 px-6 py-12 text-white">
           <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-12">
             <div className="md:col-span-4 space-y-3">
@@ -181,22 +110,6 @@ export default async function PostPage({
             <div className="md:col-span-2 space-y-2 text-sm text-white/80">
               <h4 className="font-semibold text-white">Support</h4>
               <a href="/rss.xml">RSS</a>
-            </div>
-
-            <div className="md:col-span-3 space-y-3">
-              <h4 className="font-semibold">Get Updates</h4>
-              <div className="flex gap-2">
-                <input
-                  className="w-full rounded-md bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/40 outline-none ring-1 ring-white/10 focus:ring-white/25"
-                  placeholder="Enter your email"
-                />
-                <button className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-neutral-900">
-                  Subscribe
-                </button>
-              </div>
-              <p className="text-xs text-white/50">
-                (Just UI for now. Wiring later.)
-              </p>
             </div>
           </div>
         </footer>
