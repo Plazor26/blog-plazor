@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import ShareRow from "@/components/ShareRow";
 import Comments from "@/components/Comments";
+import AdSlot from "@/components/AdSlot";
 import { getPostBySlug } from "@/lib/posts";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
@@ -13,6 +14,8 @@ function initials(name: string) {
   const parts = (name || "Plazor").trim().split(" ").filter(Boolean);
   return ((parts[0]?.[0] ?? "P") + (parts[1]?.[0] ?? "")).toUpperCase();
 }
+
+const ADS_ENABLED = process.env.NEXT_PUBLIC_ADS_ENABLED === "true";
 
 export default async function PostPage({
   params,
@@ -33,6 +36,7 @@ export default async function PostPage({
     return (
       <div className="min-h-screen flex flex-col bg-white text-neutral-900">
         <main className="flex-1">
+          {/* HERO */}
           {image && (
             <section className="relative">
               <Navbar />
@@ -49,6 +53,7 @@ export default async function PostPage({
             </section>
           )}
 
+          {/* ARTICLE */}
           <article className="mx-auto max-w-3xl px-6 py-16 space-y-14">
             <header className="space-y-6">
               <span className="inline-flex rounded-md bg-neutral-100 px-2 py-0.5 text-[11px] uppercase tracking-wide text-neutral-700">
@@ -71,12 +76,20 @@ export default async function PostPage({
               </div>
             </header>
 
+            {/* CONTENT */}
             <div className="prose prose-neutral max-w-none text-neutral-900">
               <MDXRemote source={content} options={mdxOptions} />
             </div>
 
+            {/* SHARE */}
             <ShareRow title={data.title} url={url} />
 
+            {/* AD — appears ONLY after approval */}
+            {ADS_ENABLED && (
+              <AdSlot slot="1234567890" />
+            )}
+
+            {/* COMMENTS */}
             <section className="pt-10 border-t">
               <h3 className="text-sm font-medium mb-4">Comments</h3>
               <Comments />
@@ -84,6 +97,7 @@ export default async function PostPage({
           </article>
         </main>
 
+        {/* FOOTER */}
         <footer className="bg-neutral-900 px-6 py-12 text-white">
           <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-12">
             <div className="md:col-span-4 space-y-3">
